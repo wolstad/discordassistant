@@ -38,8 +38,8 @@ async def on_ready():
 # Command error handling
 @bot.event
 async def on_command_error(error, ctx):
-    await bot.delete_message(ctx.message)
-    await bot.send_message(ctx.message.author, "[Error] Invalid command or syntax. Use '.help' for assistance.")
+    await ctx.message.delete()
+    await ctx.message.author.send("[Error] Invalid command or syntax. Use '.help' for assistance.")
 
 # Refresh config when new person joins
 @bot.event
