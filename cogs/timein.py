@@ -8,6 +8,7 @@ import string
 import re
 import xlsxwriter
 from discord.ext import commands
+from discord import Status
 
 
 class TimeIn(commands.Cog, name='Time In'):
@@ -338,11 +339,12 @@ class TimeIn(commands.Cog, name='Time In'):
     ###################
 
     # Time out users when they go offline
+    @commands.Cog.listener()
     async def on_member_update(self, before, after):
-        if str(before.status) in ['online', 'dnd']:
-            if str(after.status) == 'offline':
-                if self.is_timed_in(after):
-                    self.timeout(after)
+        if after.status == Status.offline:
+            if await self.is_timed_in(after):
+                time = await self.get_time(after, datetime.datetime.utcnow())
+                await self.time_out(after, time)
 
     #################
     # User Commands #
