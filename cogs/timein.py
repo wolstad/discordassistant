@@ -349,13 +349,17 @@ class TimeIn(commands.Cog, name='Time In'):
                 await member.send('[Error] Please insert keywords.')
                 await ctx.message.delete()
             else:
-                for zone in zones:
-                    if all(arg.lower() in zone.lower() for arg in args):
-                        if len(output) > 0:
-                            output += ', '
-                        output += '[' + str(zones.index(zone)) + '] ' + zone
-                await member.send(output)
-                await ctx.message.delete()
+                try:
+                    for zone in zones:
+                        if all(arg.lower() in zone.lower() for arg in args):
+                            if len(output) > 0:
+                                output += ', '
+                            output += '[' + str(zones.index(zone)) + '] ' + zone
+                    await member.send(output)
+                    await ctx.message.delete()
+                except:
+                    await member.send('[Error] Can not find time zone matching keywords.')
+                    await ctx.message.delete()
         else:
             await member.send('[Error] Time in commands can only be run in the time in channel.')
             await ctx.message.delete()
