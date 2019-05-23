@@ -333,6 +333,17 @@ class TimeIn(commands.Cog, name='Time In'):
             if emote.name == name:
                 return emote.id
 
+    ###################
+    # Event Listeners #
+    ###################
+
+    # Time out users when they go offline
+    async def on_member_update(self, before, after):
+        if str(before.status) in ['online', 'dnd']:
+            if str(after.status) == 'offline':
+                if self.is_timed_in(after):
+                    self.timeout(after)
+
     #################
     # User Commands #
     #################
