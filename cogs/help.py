@@ -46,8 +46,8 @@ commands_list['ti_exclude'] = ['Exclude a user for time in calculations.',
                                '<user>',
                                '@User#1234']
 commands_list['change_status'] = ['Change the status message of the bot.',
-                               '<status> ...',
-                               'hardly working']
+                                  '<status> ...',
+                                  'hardly working']
 
 
 class Help(commands.Cog, name='Help'):
