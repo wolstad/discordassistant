@@ -46,8 +46,8 @@ commands_list['ti_exclude'] = ['Exclude a user for time in calculations.',
                                '<user>',
                                '@User#1234']
 commands_list['ti_message_limit'] = ['Set the number of messages time in functions iterate through.',
-                               '<num>',
-                               '500']
+                                     '<num>',
+                                     '500']
 commands_list['change_status'] = ['Change the status message of the bot.',
                                   '<status> ...',
                                   'hardly working']
