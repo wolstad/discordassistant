@@ -241,33 +241,33 @@ class TimeIn(commands.Cog, name='Time In'):
         curr_year = time.year
 
         start_month = 0
-        start_year = 0
+        start_year = curr_year
         start_day = pay_day
 
         end_month = 0
-        end_year = 0
+        end_year = curr_year
         end_day = pay_day - 1
 
         timein_users = await self.timein_users()
 
-        # Calculate start/end months and years
-        if curr_day >= pay_day:
-            start_month = curr_month
-            start_year = curr_year
-
-            end_month = curr_month + 1
+        # It is before pay day
+        if curr_day < pay_day:
+            end_month = curr_month - 1
             end_year = curr_year
-            # Account for December
-            if curr_month == 12:
-                end_year += 1
-        else:
-            start_month = curr_month - 1
-            start_year = curr_year
 
+            start_month = curr_month - 2
+
+            if curr_month == 1:
+                start_year -= 1
+                end_year -= 1
+        # It is payday or after the pay day
+        else:
             end_month = curr_month
             end_year = curr_year
 
-            # Account for January
+            start_month = curr_month - 1
+            start_year = curr_year - 1
+
             if curr_month == 1:
                 start_year -= 1
 
