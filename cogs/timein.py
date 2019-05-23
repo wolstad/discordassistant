@@ -17,7 +17,7 @@ class TimeIn(commands.Cog, name='Time In'):
     # Constants #
     #############
 
-    MESSAGE_LIMIT = 500;
+    MESSAGE_LIMIT = config.get_message_limit()
     INVALID_CHARACTERS = ['{', '}', '[', ']', '*', '?']
 
     def __init__(self, bot):
@@ -254,8 +254,6 @@ class TimeIn(commands.Cog, name='Time In'):
         # It is before pay day
         if curr_day < pay_day:
             end_month = curr_month - 1
-            end_year = curr_year
-
             start_month = curr_month - 2
 
             if curr_month == 1:
@@ -264,10 +262,7 @@ class TimeIn(commands.Cog, name='Time In'):
         # It is payday or after the pay day
         else:
             end_month = curr_month
-            end_year = curr_year
-
             start_month = curr_month - 1
-            start_year = curr_year - 1
 
             if curr_month == 1:
                 start_year -= 1
@@ -631,6 +626,23 @@ class TimeIn(commands.Cog, name='Time In'):
                     await member.send('[Error] Please enter a valid day of the month.')
             else:
                 await member.send('[Error] Please enter a numeric day of the month.')
+            await ctx.message.delete()
+        else:
+            await member.send('[Error] Time in commands can only be run in the time in channel.')
+            await ctx.message.delete()
+
+    @commands.command()
+    async def ti_message_limit(self, ctx, num):
+        member = ctx.message.author
+        if config.get_timein_channel() is not None and ctx.message.channel.id == config.get_timein_channel():
+            if num.isdigit():
+                if int(num) > 0:
+                    config.set_message_limit(int(num))
+                    await member.send('[Success] Updated message limit.')
+                else:
+                    await member.send('[Error] Please enter a valid number.')
+            else:
+                await member.send('[Error] Please enter a valid number.')
             await ctx.message.delete()
         else:
             await member.send('[Error] Time in commands can only be run in the time in channel.')

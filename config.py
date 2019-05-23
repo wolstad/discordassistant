@@ -18,7 +18,8 @@ def initialize():
             'command_prefix': '.',
             'pay_day': None,
             'timein_exclusions': [],
-            'timein_channel': None
+            'timein_channel': None,
+            'message_limit': 500
         })
 
         config['users'] = []
@@ -72,6 +73,10 @@ def set_pay_day(day):
     config['bot'][0]['pay_day'] = day
     update(config)
 
+def set_message_limit(num):
+    config = get_config()
+    config['bot'][0]['message_limit'] = num
+    update(config)
 
 def add_indentifier(user, indentifier):
     indentifiers = get_user_val(user, 'used_identifiers')
@@ -137,6 +142,9 @@ def get_payday():
     config = get_config()
     return config['bot'][0]['pay_day']
 
+def get_message_limit():
+    config = get_config()
+    return config['bot'][0]['message_limit']
 
 ####################
 # Helper Functions #
