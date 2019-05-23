@@ -68,6 +68,9 @@ Ex: `.ti_report`
 - **Exclude a user for time in calculations.**
 Usage: `.ti_exclude <user>`
 Ex: `.ti_exclude @User#1234`
+- **Change the status message of the bot.**
+Usage: `.change_status <status> ...`
+Ex: `.change_status hardly working`
 
 ## Note
 The time in identifier is a unique 5 character string associated with each time in. Time in identifiers are used when updating and deleting existing time ins.
