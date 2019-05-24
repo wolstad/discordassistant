@@ -71,6 +71,9 @@ Ex: `.ti_exclude @User#1234`
 - **Change the status message of the bot.**
 Usage: `.change_status <status> ...`
 Ex: `.change_status hardly working`
+- **Enable printing of command errors.**
+Usage: `.debug`
+Ex: `.debug`
 
 ## Note
 The time in identifier is a unique 5 character string associated with each time in. Time in identifiers are used when updating and deleting existing time ins.
