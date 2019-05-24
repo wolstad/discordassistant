@@ -1,5 +1,7 @@
 import discord
 import config
+import traceback
+import sys
 from discord.ext import commands
 from discord import Status
 
@@ -32,10 +34,15 @@ async def update_members():
 #############
 
 
-@commands.command()
-async def debug():
+@bot.command()
+async def debug(ctx):
     global debug
     debug = not debug
+    message = 'Debug disabled.'
+    if debug:
+        message = 'Debug enabled.'
+    await ctx.message.author.send(message)
+    await ctx.message.delete()
 
 
 ###############
@@ -56,6 +63,9 @@ async def on_command_error(ctx, error):
     if not debug:
         await ctx.message.delete()
         await ctx.message.author.send("[Error] Invalid command or syntax. Use '.help' for assistance.")
+    else:
+        print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
+        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 
 # Refresh config when new person joins
