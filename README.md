@@ -75,5 +75,6 @@ Ex: `.change_status hardly working`
 Usage: `.debug`
 Ex: `.debug`
 
-## Note
-The time in identifier is a unique 5 character string associated with each time in. Time in identifiers are used when updating and deleting existing time ins.
+## Notes
+- The time in identifier is a unique 5 character string associated with each time in. Time in identifiers are used when updating and deleting existing time ins.
+- Users are automatically timed out when they go offline.
