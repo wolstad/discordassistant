@@ -30,14 +30,12 @@ class TimeIn(commands.Cog, name='Time In'):
     def daterange(self, d1, d2):
         return (d1 + datetime.timedelta(days=i) for i in range((d2 - d1).days + 1))
 
-    async def get_timein_hours(self, message):
-        time_array = await self.strip_time(message)
+    async def get_timein_dif(self, in_time, out_time):
         time_sum = 0
-        for i in range(0, len(time_array), 2):
-            time1 = datetime.datetime.strptime(time_array[i], '%H:%M')
-            time2 = datetime.datetime.strptime(time_array[i + 1], '%H:%M')
-            diff = time2 - time1
-            time_sum += diff.seconds / 3600
+        time1 = datetime.datetime.strptime(in_time, '%H:%M')
+        time2 = datetime.datetime.strptime(out_time, '%H:%M')
+        diff = time2 - time1
+        time_sum += diff.seconds / 3600
         return time_sum
 
     # Return a dictionary of all time ins for a specified range
@@ -46,12 +44,12 @@ class TimeIn(commands.Cog, name='Time In'):
         timein_users = await self.timein_users()
         # Add all users to dic
         for member in timein_users:
-            output[member.display_name] = []
+            output[member.display_name] = {}
+            for day in self.daterange(start_date, end_date):
+                output[member.display_name][day.strftime("%B %d, %Y")] = 0
 
-        # Check all messages for a specific date
-        count = 0
+        # Calculate time ins
         for day in self.daterange(start_date, end_date):
-            count += 1
             async for message in self.bot.get_channel(config.get_timein_channel()).history(limit=self.MESSAGE_LIMIT):
                 curr_message = message.content
                 # If message contains date
@@ -59,15 +57,19 @@ class TimeIn(commands.Cog, name='Time In'):
                     # Check all users for each
                     for user in timein_users:
                         # Add total hours to specified user
-                        if (user.display_name in curr_message):
+                        if user.display_name in curr_message:
                             total = await self.get_timein_hours(message)
-                            output[user.display_name].append(total)
-            # Add zero hours to user if they have not timed in on this date
-            for user in timein_users:
-                if len(output[user.display_name]) < count:
-                    output[user.display_name].append(0)
-            count += 1
-        return output
+                            output[user.display_name][day.strftime("%B %d, %Y")] += total
+
+        print(output)
+        # Flatten list
+        flattened = {}
+        for member in timein_users:
+            flattened[member.display_name] = []
+            for day in self.daterange(start_date, end_date):
+                flattened[member.display_name].append(output[member.display_name][day.strftime("%B %d, %Y")])
+
+        return flattened
 
     # Return an array of valid users for time ins
     async def timein_users(self):
@@ -120,10 +122,15 @@ class TimeIn(commands.Cog, name='Time In'):
         return False
 
     # Return all time ranges from a time in message. Will return an array. Odd indexes are time ins. Even are time outs
-    async def strip_time(self, message):
-        init_split = message.content.split('{')
-        time_range = init_split[1].split('}')[0]
-        return time_range.split(' - ')
+    async def get_timein_hours(self, message):
+        total = 0
+        line_split = message.content.split('\n')
+        for i in range(4, len(line_split)):
+            init_split = line_split[i].split('{')
+            time_range = init_split[1].split('}')[0]
+            print(time_range)
+            total += await self.get_timein_dif(time_range.split(' - ')[0], time_range.split(' - ')[1])
+        return total
 
     # Check if a message is valid to be summed for hours calulation
     async def valid_calc(self, member, message, current_date):
@@ -300,13 +307,13 @@ class TimeIn(commands.Cog, name='Time In'):
         # Add timein hours
         for user in timein_users:
             user_timeins = timeins[user.display_name]
-            for i in range(0, len(user_timeins) - 1):
+            for i in range(0, len(user_timeins)):
                 worksheet.write(i + 1, user_count, str(user_timeins[i])[0:8], cell)
             # Write total hours
             total_time = 0
             for time in user_timeins:
                 total_time += time
-            worksheet.write(len(user_timeins), user_count, str(total_time)[0:8], header)
+            worksheet.write(len(user_timeins) + 1, user_count, str(total_time)[0:8], header)
 
             pay_rate = config.get_user_val(user, 'pay_rate')
             worksheet.write(day_row + 1, user_count, pay_rate, header)
