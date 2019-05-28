@@ -222,7 +222,8 @@ class TimeIn(commands.Cog, name='Time In'):
 
     # Notify all users on the server
     async def notify_all(self, message):
-        for member in self.bot.get_all_members():
+        timein_users = await self.timein_users()
+        for member in timein_users:
             await member.send('[Announcement] ' + message)
 
     # Check if time range is valid
