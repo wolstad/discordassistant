@@ -61,7 +61,6 @@ class TimeIn(commands.Cog, name='Time In'):
                             total = await self.get_timein_hours(message)
                             output[user.display_name][day.strftime("%B %d, %Y")] += total
 
-        print(output)
         # Flatten list
         flattened = {}
         for member in timein_users:
@@ -128,7 +127,6 @@ class TimeIn(commands.Cog, name='Time In'):
         for i in range(4, len(line_split)):
             init_split = line_split[i].split('{')
             time_range = init_split[1].split('}')[0]
-            print(time_range)
             total += await self.get_timein_dif(time_range.split(' - ')[0], time_range.split(' - ')[1])
         return total
 
@@ -555,8 +553,9 @@ class TimeIn(commands.Cog, name='Time In'):
 
     # Set timezone of user
     @commands.command()
-    async def ti_set_timezone(self, ctx, zone_num):
-        member = ctx.message.author
+    async def ti_set_timezone(self, ctx, user, zone_num):
+        member = ctx.message.mentions[0]
+        sender = ctx.message.author
         if config.get_timein_channel() is not None and ctx.message.channel.id == config.get_timein_channel():
             zones = pytz.all_timezones
 
@@ -565,32 +564,33 @@ class TimeIn(commands.Cog, name='Time In'):
                 zone_num = int(zone_num)
                 if zone_num >= 0 and zone_num <= len(zones):
                     config.update_user(member, 'time_zone', zones[zone_num])
-                    await member.send('[Success] Updated time zone.')
+                    await sender.send('[Success] Updated time zone.')
                     await ctx.message.delete()
                 else:
-                    await member.send('[Error] Not a valid zone number.')
+                    await sender.send('[Error] Not a valid zone number.')
                     await ctx.message.delete()
             else:
-                await member.send('[Error] Please enter a zone number.')
+                await sender.send('[Error] Please enter a zone number.')
                 await ctx.message.delete()
         else:
-            await member.send('[Error] Time in commands can only be run in the time in channel.')
+            await sender.send('[Error] Time in commands can only be run in the time in channel.')
             await ctx.message.delete()
 
     # Set the emote for time in messages
     @commands.command()
-    async def ti_set_emote(self, ctx, emote):
-        member = ctx.message.author
+    async def ti_set_emote(self, ctx, user, emote):
+        member = ctx.message.mentions[0]
+        sender = ctx.message.author
         if config.get_timein_channel() is not None and ctx.message.channel.id == config.get_timein_channel():
             # Incorrect syntax
             if ':' in emote:
-                await member.send('[Error] Please do not include colons (:) with this command.')
+                await sender.send('[Error] Please do not include colons (:) with this command.')
             else:
                 config.update_user(member, 'emote', emote)
-                await member.send('[Success] Time in emote updated.')
+                await sender.send('[Success] Time in emote updated.')
             await ctx.message.delete()
         else:
-            await member.send('[Error] Time in commands can only be run in the time in channel.')
+            await sender.send('[Error] Time in commands can only be run in the time in channel.')
             await ctx.message.delete()
 
     ##################
@@ -669,12 +669,7 @@ class TimeIn(commands.Cog, name='Time In'):
                 time_sum = 0
                 async for message in self.bot.get_channel(config.get_timein_channel()).history(limit=self.MESSAGE_LIMIT):
                     if await self.valid_calc(member, message, time):
-                        time_array = await self.strip_time(message)
-                        for i in range(0, len(time_array), 2):
-                            time1 = datetime.datetime.strptime(time_array[i], '%H:%M')
-                            time2 = datetime.datetime.strptime(time_array[i + 1], '%H:%M')
-                            diff = time2 - time1
-                            time_sum += diff.seconds / 3600
+                        time_sum += await self.get_timein_hours(message)
 
                 await sender.send(member.display_name + ' has timed in: ' + str(time_sum) + ' hours and has earned: $' + str(config.get_user_val(member, 'pay_rate') * time_sum) + ' this pay period.')
                 await member.send('[Announcement] A time in report is being generated. Please notify an admin if you are currently timed in or your time ins are incorrect.')
@@ -696,6 +691,7 @@ class TimeIn(commands.Cog, name='Time In'):
                 await ctx.message.delete()
             else:
                 await self.timeout_all(ctx.message.created_at)
+                await self.notify_all('A time in report is being generated. Please notify an admin if you are currently timed in or your time ins are incorrect.')
                 await ctx.message.delete()
                 output_file = await self.timein_report(ctx.message.created_at)
                 await member.send(file=discord.File(output_file))

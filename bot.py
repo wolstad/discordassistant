@@ -17,8 +17,6 @@ COMMAND_PREFIX = config.get_command_prefix()
 
 bot = commands.Bot(command_prefix=COMMAND_PREFIX)
 
-debug = False
-
 # Define bot extensions
 extensions = ['cogs.chat', 'cogs.timein', 'cogs.help']
 
@@ -28,21 +26,6 @@ async def update_members():
     for user in bot.get_all_members():
         if not config.user_in_config(user) and user.id != bot.user.id:
             config.add_user(user)
-
-#############
-# Commmands #
-#############
-
-
-@bot.command()
-async def debug(ctx):
-    global debug
-    debug = not debug
-    message = 'Debug disabled.'
-    if debug:
-        message = 'Debug enabled.'
-    await ctx.message.author.send(message)
-    await ctx.message.delete()
 
 
 ###############
@@ -59,13 +42,8 @@ async def on_ready():
 # Command error handling
 @bot.event
 async def on_command_error(ctx, error):
-    global debug
-    if not debug:
-        await ctx.message.delete()
-        await ctx.message.author.send("[Error] Invalid command or syntax. Use '.help' for assistance.")
-    else:
-        print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
-        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+    await ctx.message.delete()
+    await ctx.message.author.send("[Error] Invalid command or syntax. Use '.help' for assistance.")
 
 
 # Refresh config when new person joins
