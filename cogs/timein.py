@@ -223,7 +223,7 @@ class TimeIn(commands.Cog, name='Time In'):
     # Notify all users on the server
     async def notify_all(self, message):
         for member in self.bot.get_all_members():
-            member.send('[Announcement] ' + message)
+            await member.send('[Announcement] ' + message)
 
     # Check if time range is valid
     async def valid_range(self, timein, timeout):
@@ -232,12 +232,11 @@ class TimeIn(commands.Cog, name='Time In'):
         return False
 
     async def timeout_all(self, time_raw):
-        for member in self.bot.get_all_members():
-            if member.id not in config.get_timein_exclusions():
-                if await self.is_timed_in(member):
-                    time = await self.get_time(member, time_raw)
-                    await self.time_out(member, time)
-                    await member.send('A time in report is being generated. You have been timed out.')
+        timein_users = await self.timein_users()
+        for member in timein_users:
+            if await self.is_timed_in(member):
+                time = await self.get_time(member, time_raw)
+                await self.time_out(member, time)
 
     async def timein_report(self, time):
         pay_day = config.get_payday()
