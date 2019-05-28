@@ -22,11 +22,11 @@ commands_list['ti_delete'] = ['Delete an existing time in.',
                               '<user> <time in identifier>',
                               '@User#1234 QMiDS']
 commands_list['ti_set_timezone'] = ['Set your timezone. Use \'.ti_search_timezones\' to get the timezone ID.',
-                                    '<timezone id>',
-                                    '585']
+                                    '<user> <timezone id>',
+                                    '.ti_set_timezone @User#1234 585']
 commands_list['ti_set_emote'] = ['Set your time in emoji.',
-                                 '<emoji>',
-                                 'tongue']
+                                 '<user> <emoji>',
+                                 '@User#1234 tongue']
 commands_list['ti_set_channel'] = ['Update the server time in channel.',
                                    '',
                                    '']
@@ -51,9 +51,6 @@ commands_list['ti_message_limit'] = ['Set the number of messages time in functio
 commands_list['change_status'] = ['Change the status message of the bot.',
                                   '<status> ...',
                                   'hardly working']
-commands_list['debug'] = ['Enable printing of command errors.',
-                          '',
-                          '']
 
 class Help(commands.Cog, name='Help'):
 
