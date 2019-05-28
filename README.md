@@ -45,11 +45,11 @@ Ex: `.ti_update @User#1234 QMiDS 3:00 13:00 beta testing`
 Usage: `.ti_delete <user> <time in identifier>`
 Ex: `.ti_delete @User#1234 QMiDS`
 - **Set your timezone. Use `.ti_search_timezones` to get the timezone ID.**
-Usage: `.ti_set_timezone <timezone id>`
-Ex: `.ti_set_timezone 585`
+Usage: `.ti_set_timezone <user> <timezone id>`
+Ex: `.ti_set_timezone @User#1234 585`
 - **Set your time in emoji.**
-Usage: `.ti_set_emote <emoji>`
-Ex: `.ti_set_emote tongue`
+Usage: `.ti_set_emote <user> <emoji>`
+Ex: `.ti_set_emote @User#1234 tongue`
 - **Update the server time in channel.**
 Usage: `.ti_set_channel`
 Ex: `.ti_set_channel`
@@ -71,9 +71,6 @@ Ex: `.ti_exclude @User#1234`
 - **Change the status message of the bot.**
 Usage: `.change_status <status> ...`
 Ex: `.change_status hardly working`
-- **Enable printing of command errors.**
-Usage: `.debug`
-Ex: `.debug`
 
 ## Notes
 - The time in identifier is a unique 5 character string associated with each time in. Time in identifiers are used when updating and deleting existing time ins.
