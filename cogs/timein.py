@@ -127,7 +127,8 @@ class TimeIn(commands.Cog, name='Time In'):
         for i in range(4, len(line_split)):
             init_split = line_split[i].split('{')
             time_range = init_split[1].split('}')[0]
-            total += await self.get_timein_dif(time_range.split(' - ')[0], time_range.split(' - ')[1])
+            if '???}' not in time_range:
+                total += await self.get_timein_dif(time_range.split(' - ')[0], time_range.split(' - ')[1])
         return total
 
     # Check if a message is valid to be summed for hours calulation
@@ -231,13 +232,6 @@ class TimeIn(commands.Cog, name='Time In'):
         if timein < timeout:
             return True
         return False
-
-    async def timeout_all(self, time_raw):
-        timein_users = await self.timein_users()
-        for member in timein_users:
-            if await self.is_timed_in(member):
-                time = await self.get_time(member, time_raw)
-                await self.time_out(member, time)
 
     async def timein_report(self, time):
         pay_day = config.get_payday()
@@ -690,7 +684,6 @@ class TimeIn(commands.Cog, name='Time In'):
                 await member.send("[Error] No pay date has been defined.")
                 await ctx.message.delete()
             else:
-                await self.timeout_all(ctx.message.created_at)
                 await self.notify_all('A time in report is being generated. Please notify an admin if you are currently timed in or your time ins are incorrect.')
                 await ctx.message.delete()
                 output_file = await self.timein_report(ctx.message.created_at)
