@@ -333,12 +333,12 @@ class TimeIn(commands.Cog, name='Time In'):
     ###################
 
     # Time out users when they go offline
-    @commands.Cog.listener()
-    async def on_member_update(self, before, after):
-        if after.status == Status.offline:
-            if await self.is_timed_in(after):
-                time = await self.get_time(after, datetime.datetime.utcnow())
-                await self.time_out(after, time)
+    # @commands.Cog.listener()
+    # async def on_member_update(self, before, after):
+    #     if after.status == Status.offline:
+    #         if await self.is_timed_in(after):
+    #             time = await self.get_time(after, datetime.datetime.utcnow())
+    #             await self.time_out(after, time)
 
     #################
     # User Commands #
