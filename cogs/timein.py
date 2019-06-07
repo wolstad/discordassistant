@@ -417,9 +417,9 @@ class TimeIn(commands.Cog, name='Time In'):
             await ctx.message.delete()
         else:
             time_raw = ctx.message.created_at
+            await ctx.message.delete()
             time = await self.get_time(member, time_raw)
             await self.time_out(member, time)
-            await ctx.message.delete()
 
     # Manually input timein
     @commands.command()
