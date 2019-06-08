@@ -380,6 +380,10 @@ class TimeIn(commands.Cog, name='Time In'):
         if len(description) <= 0:
             await member.send('[Error] Please include a timein description.')
             await ctx.message.delete()
+        # If description is too long
+        elif len(task) > 65:
+            await member.send('[Error] Timein description is too long.')
+            await ctx.message.delete()
         # If time in channel has not been set
         elif config.get_timein_channel() is None or ctx.message.channel.id != config.get_timein_channel():
             await member.send('[Error] Time in commands can only be run in the time in channel.')
@@ -436,6 +440,10 @@ class TimeIn(commands.Cog, name='Time In'):
             if len(description) <= 0:
                 await sender.send('[Error] Please include a timein description.')
                 await ctx.message.delete()
+            # If description is too long
+            elif len(task) > 65:
+                await member.send('[Error] Timein description is too long.')
+                await ctx.message.delete()
             # Member has invalid characters
             elif not await self.message_valid(task):
                 await sender.send('[Error] Invalid characters in time in description.')
@@ -488,6 +496,10 @@ class TimeIn(commands.Cog, name='Time In'):
         # if there is no description
         if len(description) <= 0:
             await sender.send('[Error] Please include a timein description.')
+            await ctx.message.delete()
+        # If description is too long
+        elif len(task) > 65:
+            await member.send('[Error] Timein description is too long.')
             await ctx.message.delete()
         # If time in channel has not been set
         elif config.get_timein_channel() is None or ctx.message.channel.id != config.get_timein_channel():
