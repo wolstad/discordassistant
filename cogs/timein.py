@@ -127,7 +127,7 @@ class TimeIn(commands.Cog, name='Time In'):
         for i in range(4, len(line_split)):
             init_split = line_split[i].split('{')
             time_range = init_split[1].split('}')[0]
-            if '???}' not in time_range:
+            if '???' not in time_range:
                 total += await self.get_timein_dif(time_range.split(' - ')[0], time_range.split(' - ')[1])
         return total
 
@@ -208,15 +208,18 @@ class TimeIn(commands.Cog, name='Time In'):
     async def time_out(self, member, time):
         # If user is timed in
         if await self.is_timed_in(member):
+            old_date_string = await self.get_timein_date(member)
             # It is the same day
-            if await self.get_timein_date(member) == time.strftime("%B %d, %Y"):
+            if old_date_string == time.strftime("%B %d, %Y"):
                 await self.timeout_message(member, time.strftime("%H:%M"))
             # It is a new day
             else:
-                await self.timeout_message(member, time.strftime("23:59"))
                 task = await self.get_timein_task(member)
-                new_day_time = datetime.datetime(time.year, time.month, time.day, 00, 00)
-                await self.time_in(member, task, new_day_time)
+                await self.timeout_message(member, "23:59")
+                old_date = datetime.datetime.strptime(old_date_string, "%B %d, %Y")
+                new_time_raw = datetime.datetime(old_date.year, old_date.month, old_date.day, 00, 00)
+                new_date = new_time_raw + datetime.timedelta(days=1)
+                await self.time_in(member, task, new_date)
                 await self.time_out(member, time)
         else:
             await member.send('[Error] You are already timed out.')
