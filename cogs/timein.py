@@ -136,13 +136,34 @@ class TimeIn(commands.Cog, name='Time In'):
         if member.display_name in message.content:
             date_raw = re.sub('[*]', '', message.content.splitlines()[3])
             check_date = datetime.datetime.strptime(date_raw, "%B %d, %Y")
-            current_month = current_date.month
+
+            check_month = check_date.month
+            check_day = check_date.day
+            check_year = check_date.year
+
+            curr_month = current_date.month
+            curr_day = current_date.day
+            curr_year = current_date.year
 
             pay_day = config.get_payday()
-            if (check_date.month == (current_month - 1)) and (check_date.day >= pay_day):
-                return True
-            elif (check_date.month == current_month) and (check_date.day < pay_day):
-                return True
+
+            # It is before pay day
+            if curr_day < pay_day:
+                if curr_month != 1:
+                    if (check_month == (curr_month - 1)) and (check_day >= pay_day) and (check_year == curr_year):
+                        return True
+                    elif (check_month == curr_month) and (check_day < pay_day) and (check_year == curr_year):
+                        return True
+                else:
+                    if (check_month == 12) and (check_year == (curr_year - 1)) and (check_day >= pay_day):
+                        return True
+                    elif (check_month == curr_month) and (check_day < pay_day) and (check_year == curr_year):
+                        return True
+            # It is payday or after the pay day
+            else:
+                if curr_month != 1:
+                    if (check_month == curr_month) and (check_day >= pay_day) and (check_year == curr_year):
+                        return True
         return False
 
     # Return the message of most recent time in if it is on the same day
