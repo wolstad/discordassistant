@@ -236,10 +236,10 @@ class TimeIn(commands.Cog, name='Time In'):
             # It is a new day
             else:
                 task = await self.get_timein_task(member)
-                await self.timeout_message(member, "23:59")
                 old_date = datetime.datetime.strptime(old_date_string, "%B %d, %Y")
                 new_time_raw = datetime.datetime(old_date.year, old_date.month, old_date.day, 00, 00)
                 new_date = new_time_raw + datetime.timedelta(days=1)
+                await self.timeout_message(member, "23:59")
                 await self.time_in(member, task, new_date)
                 await self.time_out(member, time)
         else:
