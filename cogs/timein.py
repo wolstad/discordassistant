@@ -236,12 +236,21 @@ class TimeIn(commands.Cog, name='Time In'):
             # It is a new day
             else:
                 task = await self.get_timein_task(member)
-                old_date = datetime.datetime.strptime(old_date_string, "%B %d, %Y")
-                new_time_raw = datetime.datetime(old_date.year, old_date.month, old_date.day, 00, 00)
-                new_date = new_time_raw + datetime.timedelta(days=1)
+                # Time out for the previous day
                 await self.timeout_message(member, "23:59")
-                await self.time_in(member, task, new_date)
-                await self.time_out(member, time)
+                # Emote selection
+                emote = config.get_user_val(member, 'emote')
+                emote_id = await self.get_emote_id(emote)
+                emote_display = '<:' + emote + ':' + str(emote_id) + '>'
+                if emote_id is None:
+                    emote_display = ':' + emote + ':'
+                # Time out for the next day
+                ti_message = '----------------------- \n'
+                ti_message += (emote_display + ' ' + member.display_name + ' ' + emote_display)
+                ti_message += '\n----------------------- \n*' + time.strftime("%B %d, %Y") + '*'
+                identifier = await self.get_identifier(member)
+                task_message = '\n [' + identifier + '] ' + task + ' {' + '00:00' + ' - ' + time.strftime("%H:%M") + '}'
+                await self.bot.get_channel(config.get_timein_channel()).send(ti_message + task_message)
         else:
             await member.send('[Error] You are already timed out.')
 
@@ -357,12 +366,12 @@ class TimeIn(commands.Cog, name='Time In'):
     ###################
 
     # Time out users when they go offline
-    # @commands.Cog.listener()
-    # async def on_member_update(self, before, after):
-    #     if after.status == Status.offline:
-    #         if await self.is_timed_in(after):
-    #             time = await self.get_time(after, datetime.datetime.utcnow())
-    #             await self.time_out(after, time)
+    @commands.Cog.listener()
+    async def on_member_update(self, before, after):
+        if after.status == Status.offline:
+            if await self.is_timed_in(after):
+                time = await self.get_time(after, datetime.datetime.utcnow())
+                await self.time_out(after, time)
 
     #################
     # User Commands #
