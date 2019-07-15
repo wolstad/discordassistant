@@ -236,8 +236,6 @@ class TimeIn(commands.Cog, name='Time In'):
             # It is a new day
             else:
                 task = await self.get_timein_task(member)
-                # Time out for the previous day
-                await self.timeout_message(member, "23:59")
                 # Emote selection
                 emote = config.get_user_val(member, 'emote')
                 emote_id = await self.get_emote_id(emote)
@@ -251,6 +249,8 @@ class TimeIn(commands.Cog, name='Time In'):
                 identifier = await self.get_identifier(member)
                 task_message = '\n [' + identifier + '] ' + task + ' {' + '00:00' + ' - ' + time.strftime("%H:%M") + '}'
                 await self.bot.get_channel(config.get_timein_channel()).send(ti_message + task_message)
+                # Time out for the previous day
+                await self.timeout_message(member, "23:59")
         else:
             await member.send('[Error] You are already timed out.')
 
