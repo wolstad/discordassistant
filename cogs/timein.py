@@ -364,7 +364,7 @@ class TimeIn(commands.Cog, name='Time In'):
             if await self.is_timed_in(after):
                 time = await self.get_time(after, datetime.datetime.utcnow())
                 await self.time_out(after, time)
-                await after.send('[Error] Can not find time zone matching keywords.')
+                await after.send('[Error] You have been timed out for inactivity.')
 
     #################
     # User Commands #
