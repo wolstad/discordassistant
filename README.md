@@ -32,6 +32,10 @@ Ex: `.timein beta testing`
 `.timeout`
 Usage: `.timeout`
 Ex: `timeout`
+- **Switch your current task. (Must currently be timed in)**
+`.switch`
+Usage: `.switch <description> ...`
+Ex: `.switch beta testing`
 - **Create a time in for a specified time and date.**
 `.ti_manual`
 Usage: `.ti_manual <user> <date> <in time> <out time> <description> ...`
@@ -44,6 +48,10 @@ Ex: `.ti_update @User#1234 QMiDS 3:00 13:00 beta testing`
 `.ti_delete`
 Usage: `.ti_delete <user> <time in identifier>`
 Ex: `.ti_delete @User#1234 QMiDS`
+- **Time in again for your most recent task.**
+`.ti_cont`
+Usage: `.ti_cont`
+Ex: `.ti_cont`
 - **Set your timezone. Use `.ti_search_timezones` to get the timezone ID.**
 Usage: `.ti_set_timezone <user> <timezone id>`
 Ex: `.ti_set_timezone @User#1234 585`
