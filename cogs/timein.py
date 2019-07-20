@@ -625,6 +625,69 @@ class TimeIn(commands.Cog, name='Time In'):
             await sender.send('[Error] Time in commands can only be run in the time in channel.')
             await ctx.message.delete()
 
+    # Switch the task you are working on
+    @commands.command()
+    async def switch(self, ctx, *description):
+        member = ctx.message.author
+        task = ' '.join(description)
+        # if there is no description
+        if len(description) <= 0:
+            await member.send('[Error] Please include a timein description.')
+            await ctx.message.delete()
+        # If description is too long
+        elif len(task) > 65:
+            await member.send('[Error] Timein description is too long.')
+            await ctx.message.delete()
+        # If time in channel has not been set
+        elif config.get_timein_channel() is None or ctx.message.channel.id != config.get_timein_channel():
+            await member.send('[Error] Time in commands can only be run in the time in channel.')
+            await ctx.message.delete()
+        # If member is not already timed in
+        elif not await self.is_timed_in(member):
+            await member.send('[Error] You cannot switch tasks if you are not currently timed in')
+            await ctx.message.delete()
+        # Member has invalid characters
+        elif not await self.message_valid(task):
+            await member.send('[Error] Invalid characters in time in description.')
+            await ctx.message.delete()
+        # Member can switch tasks
+        else:
+            time_raw = ctx.message.created_at
+            time = await self.get_time(member, time_raw)
+            # Time out the user
+            await self.time_out(member, time)
+            # Time them back in with the new task
+            await self.time_in(member, task, time)
+            await ctx.message.delete()
+
+    # Continue working on the last task
+    @commands.command()
+    async def ti_cont(self, ctx):
+        member = ctx.message.author
+        # If time in channel has not been set
+        if config.get_timein_channel() is None or ctx.message.channel.id != config.get_timein_channel():
+            await member.send('[Error] Time in commands can only be run in the time in channel.')
+            await ctx.message.delete()
+        # If member has not defined a timezone
+        elif config.get_user_val(member, 'time_zone') is None:
+            await member.send('[Error] Please define your timezone: .set_timezone <zone_num>\n'
+                              'Example: .set_timezone 1 \n \n'
+                              'To find your timezone: .search_timezone <args>\n'
+                              'Example: .search_timezone Pacific US')
+            await ctx.message.delete()
+        # If member is already timed in
+        elif await self.is_timed_in(member):
+            await member.send('[Error] You already have an'
+                              ' active time in.')
+            await ctx.message.delete()
+        # Member can time in
+        else:
+            task = await self.get_timein_task(member)
+            time_raw = ctx.message.created_at
+            time = await self.get_time(member, time_raw)
+            await self.time_in(member, task, time)
+            await ctx.message.delete()
+
     ##################
     # Admin Commands #
     ##################
@@ -744,12 +807,6 @@ class TimeIn(commands.Cog, name='Time In'):
             await sender.send('[Success] Removed ' + member.display_name + ' to timein exclusions.')
             await ctx.message.delete()
 
-    # Time in test debug command
-    @commands.command()
-    async def test(self, ctx):
-        member = ctx.message.author
-        d = datetime.datetime(2019, 7, 16, 1, 00)
-        await self.time_out(member, d)
 
 def setup(bot):
     bot.add_cog(TimeIn(bot))

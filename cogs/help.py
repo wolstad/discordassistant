@@ -12,6 +12,9 @@ commands_list['timein'] = ['Create a time in.',
 commands_list['timeout'] = ['Time out for a current time in.',
                             '',
                             '']
+commands_list['switch'] = ['Switch your current task. (Must currently be timed in)',
+                           '<description> ...',
+                           'beta testing']
 commands_list['ti_manual'] = ['Create a time in for a specified time and date.',
                               '<user> <date> <in time> <out time> <description> ...',
                               '@User#1234 1-29-2019 4:00 13:00 beta testing']
@@ -21,6 +24,9 @@ commands_list['ti_update'] = ['Edit an existing time in.',
 commands_list['ti_delete'] = ['Delete an existing time in.',
                               '<user> <time in identifier>',
                               '@User#1234 QMiDS']
+commands_list['ti_cont'] = ['Time in again for your most recent task.',
+                            '',
+                            '']
 commands_list['ti_set_timezone'] = ['Set your timezone. Use \'.ti_search_timezones\' to get the timezone ID.',
                                     '<user> <timezone id>',
                                     '.ti_set_timezone @User#1234 585']
