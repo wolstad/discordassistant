@@ -85,6 +85,15 @@ class TimeIn(commands.Cog, name='Time In'):
             return False
         return True
 
+    # Check if the timein is valid for the correct user
+    async def valid_timein_user(self, message, display_name):
+        line_split = message.content.split('\n')
+        user_line = line_split[1]
+        if (display_name in user_line) and message.author.bot:
+            return True
+        else:
+            return False
+
     # Make sure all users have pay rate
     async def check_pay(self):
         for member in self.bot.get_all_members():
@@ -115,7 +124,7 @@ class TimeIn(commands.Cog, name='Time In'):
     async def is_timed_in(self, member):
         async for message in self.bot.get_channel(config.get_timein_channel()).history(limit=self.MESSAGE_LIMIT):
             curr_message = message.content
-            if (member.display_name in curr_message) and message.author.bot:
+            if await self.valid_timein_user(message, member.display_name):
                 if '???}' in curr_message:
                     return True
         return False
@@ -170,7 +179,7 @@ class TimeIn(commands.Cog, name='Time In'):
     async def check_timein(self, member, date):
         async for message in self.bot.get_channel(config.get_timein_channel()).history(limit=self.MESSAGE_LIMIT):
             curr_message = message.content
-            if member.display_name in curr_message and message.author.bot:
+            if await self.valid_timein_user(message, member.display_name):
                 if date.strftime("%B %d, %Y") in curr_message:
                     return message
         return None
@@ -179,7 +188,7 @@ class TimeIn(commands.Cog, name='Time In'):
     async def get_timein_date(self, member):
         async for message in self.bot.get_channel(config.get_timein_channel()).history(limit=self.MESSAGE_LIMIT):
             curr_message = message.content
-            if member.display_name in curr_message and message.author.bot:
+            if await self.valid_timein_user(message, member.display_name):
                 init_split = curr_message.split('*')
                 date = init_split[1].split('*')
                 return date[0]
@@ -188,7 +197,7 @@ class TimeIn(commands.Cog, name='Time In'):
     async def get_timein_task(self, member):
         async for message in self.bot.get_channel(config.get_timein_channel()).history(limit=self.MESSAGE_LIMIT):
             curr_message = message.content
-            if member.display_name in curr_message and message.author.bot:
+            if await self.valid_timein_user(message, member.display_name):
                 line_split = curr_message.split('\n')
                 line_split_len = len(line_split)
                 id_split = line_split[line_split_len - 1].split('] ')
@@ -199,7 +208,7 @@ class TimeIn(commands.Cog, name='Time In'):
     async def timeout_message(self, member, time):
         async for message in self.bot.get_channel(config.get_timein_channel()).history(limit=self.MESSAGE_LIMIT):
             curr_message = message.content
-            if member.display_name in curr_message and message.author.bot:
+            if await self.valid_timein_user(message, member.display_name):
                 curr_message = curr_message.replace('???', time)
                 await message.edit(content=curr_message)
 
@@ -483,8 +492,8 @@ class TimeIn(commands.Cog, name='Time In'):
                 async for message in self.bot.get_channel(config.get_timein_channel()).history(limit=self.MESSAGE_LIMIT):
                     curr_message = message.content
                     # User has already timed in on this date
-                    if (member.display_name in curr_message) and (
-                            date.strftime("%B %d, %Y") in curr_message) and message.author.bot:
+                    if await self.valid_timein_user(message, member.display_name) and (
+                            date.strftime("%B %d, %Y") in curr_message):
                         identifier = await self.get_identifier(member)
                         curr_message += '\n [' + identifier + '] ' + task + ' {' + in_time_raw.strftime(
                             "%H:%M") + ' - ' + out_time_raw.strftime("%H:%M") + '}'
@@ -542,7 +551,7 @@ class TimeIn(commands.Cog, name='Time In'):
         else:
             async for message in self.bot.get_channel(config.get_timein_channel()).history(limit=self.MESSAGE_LIMIT):
                 curr_message = message.content
-                if (member.display_name in curr_message) and (id in curr_message) and message.author.bot:
+                if await self.valid_timein_user(message, member.display_name) and (id in curr_message):
                     lines = message.content.splitlines()
                     for line in lines:
                         if id in line:
@@ -566,7 +575,7 @@ class TimeIn(commands.Cog, name='Time In'):
         else:
             async for message in self.bot.get_channel(config.get_timein_channel()).history(limit=self.MESSAGE_LIMIT):
                 curr_message = message.content
-                if (member.display_name in curr_message) and (id in curr_message) and message.author.bot:
+                if await self.valid_timein_user(message, member.display_name) and (id in curr_message):
                     lines = message.content.splitlines()
                     # Delete whole message
                     if len(lines) <= 5:
