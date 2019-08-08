@@ -87,10 +87,13 @@ class TimeIn(commands.Cog, name='Time In'):
 
     # Check if the timein is valid for the correct user
     async def valid_timein_user(self, message, display_name):
-        line_split = message.content.split('\n')
-        user_line = line_split[1]
-        if (display_name in user_line) and message.author.bot:
-            return True
+        if message.author.bot:
+            line_split = message.content.split('\n')
+            user_line = line_split[1]
+            if display_name in user_line:
+                return True
+            else:
+                return False
         else:
             return False
 
