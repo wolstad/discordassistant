@@ -7,7 +7,7 @@ This bot is designed to increase the productivity for small teams by handling ta
  - Set a pay rate and pay day for users.
  - Generate a report for the given time in period and calculate the total hours logged.
 
-Installation is quick and easy. User specifics are stored in a JSON configuration file, but time ins are recorded and calculated using discord Discord messages.
+Installation is quick and easy. User specifics are stored in a JSON configuration file, but time ins are recorded and calculated using Discord messages.
 
 ## Installation
 
