@@ -99,7 +99,7 @@ class TimeIn(commands.Cog, name='Time In'):
 
     # Make sure all users have pay rate
     async def check_pay(self):
-        for member in self.bot.get_all_members():
+        for member in self.bot.get_channel(config.get_timein_channel()).members:
             if member.id != self.bot.user.id:
                 if (config.get_user_val(member, 'pay_rate') is None) and (member.id not in config.get_timein_exclusions()):
                     return False
