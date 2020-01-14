@@ -74,7 +74,7 @@ class TimeIn(commands.Cog, name='Time In'):
     async def timein_users(self):
         timein_exclude = config.get_timein_exclusions()
         output = []
-        for member in self.bot.get_all_members():
+        for member in self.bot.get_channel(config.get_timein_channel()).members:
             if member.id not in timein_exclude and member.id != self.bot.user.id:
                 output.append(member)
         return output
@@ -292,16 +292,21 @@ class TimeIn(commands.Cog, name='Time In'):
             end_month = curr_month - 1
             start_month = curr_month - 2
 
+            # Account for new year
             if curr_month == 1:
                 start_year -= 1
                 end_year -= 1
+                start_month = 11
+                end_month = 12
         # It is payday or after the pay day
         else:
             end_month = curr_month
             start_month = curr_month - 1
 
+            # Account for new year
             if curr_month == 1:
                 start_year -= 1
+                start_month = 12
 
         # Compute start and end date
         start_date = datetime.datetime(start_year, start_month, start_day)
@@ -346,6 +351,7 @@ class TimeIn(commands.Cog, name='Time In'):
 
             pay_rate = config.get_user_val(user, 'pay_rate')
             worksheet.write(day_row + 1, user_count, pay_rate, header)
+            print("Name: " + user.display_name + ", Pay Rate: " + str(pay_rate) + ", Total Time: " + str(total_time))
             worksheet.write(day_row + 2, user_count, str(pay_rate * total_time)[0:8], header)
             user_count += 1
 
