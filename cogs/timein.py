@@ -298,6 +298,12 @@ class TimeIn(commands.Cog, name='Time In'):
                 end_year -= 1
                 start_month = 11
                 end_month = 12
+            # Account for new year February
+            elif curr_month == 2:
+                start_year -= 1
+                start_month = 12
+                end_month = 1
+
         # It is payday or after the pay day
         else:
             end_month = curr_month
